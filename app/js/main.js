@@ -25,10 +25,6 @@ const initialPosition = (d, wrp) => {
   return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "100" : "-100"}%)`;
 };
 
-const showedPosition = d => {
-  return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "0" : "0"}%)`;
-};
-
 const setDelayTime = () => {
   var delayDivs = document.querySelectorAll('div[class*="delayTime_"]');
   for (const div of delayDivs) {
@@ -55,8 +51,6 @@ const setTransitionDuration = () => {
   }
 };
 
-
-
 if (!debug) {
   [0,1,2,3].forEach(d => {
     for (let i = 0; i < wrps[d].length; i++) {
@@ -69,15 +63,21 @@ if (!debug) {
   });
 }
 
+[0, 1, 2, 3].forEach(d => {
+  for (let i = 0; i < wrps[d].length; i++) {
+    wrps[d][i].style.transition = `transform ${showTime}ms cubic-bezier${showTiming} 1100ms`;
+  }
+
+  for (let i = 0; i < imgs[d].length; i++) {
+    imgs[d][i].style.transition = `transform ${showTime * 1.5}ms cubic-bezier${showTiming} 1100ms`;
+  }
+});
 
 btn.onclick = function () {
-
-
   // transition page
   page2.style.display = "grid";
   page2.style.transform = "translateX(0)";
   page2.style.transition = `transform ${showPageTime}ms cubic-bezier(.65,.29,.54,0.9)`;
-
 
   // change menu component's color
   explore.style.opacity = "0";
@@ -96,33 +96,21 @@ btn.onclick = function () {
 
   this.style.display = "none";
 
-
-  // show new components's content
-
-  // set transition properties
-  [0, 1, 2, 3].forEach(d => {
-    for (let i = 0; i < wrps[d].length; i++) {
-      wrps[d][i].style.transition = `transform ${showTime}ms cubic-bezier${showTiming} 1100ms`;
-    }
-
-    for (let i = 0; i < imgs[d].length; i++) {
-      imgs[d][i].style.transition = `transform ${showTime * 1.5}ms cubic-bezier${showTiming} 1100ms`;
-    }
-  });
-
   setDelayTime();
   setTransitionDuration();
 
   // transition
-  [0, 1, 2, 3].forEach(d => {
-    for (let i = 0; i < wrps[d].length; i++) {
-      wrps[d][i].style.transform  = showedPosition(d);
-    }
+  for (const directionWrappers of wrps)
+    for (const wrapper of directionWrappers)
+      wrapper.style.transform = "none";
 
-    for (let i = 0; i < imgs[d].length; i++) {
-      imgs[d][i].style.transform  = "none";
-    }
-  });
+  for (const directionImages of imgs)
+    for (const image of directionImages)
+      image.style.transform = "none";
+
+};
+
+document.getElementsByClassName("nav-downBtn")[0].onclick = function () {
+  btn.onclick();
+
 }
-
-document.getElementsByClassName("nav-downBtn")[0].onclick = btn.onclick;
