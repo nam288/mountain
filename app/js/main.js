@@ -1,5 +1,6 @@
 let debug = false;
-const showTime = "0.7", hideTime = "1";
+const showPageTime = "1000"
+const showTime = "400", hideTime = "1000";
 const showTiming = "(.19,.53,.27,.92)", hideTiming = "(1,.4,.31,.73)";
 
 var btn       = document.getElementsByClassName("go-down-btn")[0];
@@ -21,16 +22,45 @@ let imgs = ['Up', 'Right', 'Down', 'Left'].map(
 const initialPosition = (d, wrp) => {
   if (wrp)
     return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "-100" : "100"}%)`;
-  return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "50" : "-50"}%)`;
+  return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "100" : "-100"}%)`;
 };
 
 const showedPosition = d => {
-  return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "-4" : "4"}%)`;
+  return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "0" : "0"}%)`;
 };
+
+const setDelayTime = () => {
+  var delayDivs = document.querySelectorAll('div[class*="delayTime_"]');
+  for (const div of delayDivs) {
+    for (const cls of div.classList) {
+      let match = /^delayTime_(\d+)$/.exec(cls);
+      if (match === null) continue;
+      console.log(match);
+      let delayTime = match[1];
+      div.style.transitionDelay = `${delayTime}ms`;
+    }
+  }
+  console.log(delayDivs);
+};
+
+const setTransitionDuration = () => {
+  var delayDivs = document.querySelectorAll('div[class*="transDuration_"]');
+  for (const div of delayDivs) {
+    for (const cls of div.classList) {
+      let match = /^transDuration_(\d+)$/.exec(cls);
+      if (match === null) continue;
+      let transitionDuration = match[1];
+      div.style.transitionDuration = `${transitionDuration}ms`;
+    }
+  }
+};
+
+
 
 if (!debug) {
   [0,1,2,3].forEach(d => {
     for (let i = 0; i < wrps[d].length; i++) {
+      wrps[d][i].style.overflow = "hidden";
       wrps[d][i].style.transform = initialPosition(d, true);
     }
     for (let i = 0; i < imgs[d].length; i++) {
@@ -39,23 +69,22 @@ if (!debug) {
   });
 }
 
-console.log(imgs);
+
 btn.onclick = function () {
 
-  // console.log(page2.style.zIndex, menu.style.zIndex);
-  // this.style.display = "none";
+
+  // transition page
   page2.style.display = "grid";
   page2.style.transform = "translateX(0)";
-  page2.style.transition = "transform 2s cubic-bezier(.65,.29,.54,0.9)";
-  explore.style.opacity = "0";
+  page2.style.transition = `transform ${showPageTime}ms cubic-bezier(.65,.29,.54,0.9)`;
 
-  // setTimeout(function () {
-    searchBtn.src = "./images/search-black.svg";
-    moreBtn.src = "./images/more-black.svg";
-  // }, 1350);
+
+  // change menu component's color
+  explore.style.opacity = "0";
+  searchBtn.src = "./images/search-black.svg";
+  moreBtn.src = "./images/more-black.svg";
 
   setTimeout(function() {
-
       document.getElementsByClassName("cur-dot")[0].src = "./images/choose-circle-black.svg";
       document.getElementsByClassName("delimPage")[0].style.color = "black";
       document.getElementsByClassName("logo")[0].style.color = "black";
@@ -64,23 +93,36 @@ btn.onclick = function () {
       for (const dot of dots)
         dot.src = "./images/circle-black.svg"
   }, 100);
+
   this.style.display = "none";
-  setTimeout(function() {
-    [0, 1, 2, 3].forEach(d => {
-      for (let i = 0; i < wrps[d].length; i++) {
-        wrps[d][i].style.transform  = showedPosition(d);
-        wrps[d][i].style.transition = `transform ${showTime}s cubic-bezier${showTiming}`;
-      }
-      for (let i = 0; i < imgs[d].length; i++) {
-        imgs[d][i].style.transform  = "none";
-        imgs[d][i].style.transition = `transform ${showTime * 2}s cubic-bezier${showTiming}`;
-      }
-    });
-    let inners = document.getElementsByClassName("inner-text");
-    for (const inner of inners)
-      inner.style.transform = "none";
 
 
-    console.log(this.style.display);
-  }, 2000);
+  // show new components's content
+
+  // set transition properties
+  [0, 1, 2, 3].forEach(d => {
+    for (let i = 0; i < wrps[d].length; i++) {
+      wrps[d][i].style.transition = `transform ${showTime}ms cubic-bezier${showTiming} 1100ms`;
+    }
+
+    for (let i = 0; i < imgs[d].length; i++) {
+      imgs[d][i].style.transition = `transform ${showTime * 1.5}ms cubic-bezier${showTiming} 1100ms`;
+    }
+  });
+
+  setDelayTime();
+  setTransitionDuration();
+
+  // transition
+  [0, 1, 2, 3].forEach(d => {
+    for (let i = 0; i < wrps[d].length; i++) {
+      wrps[d][i].style.transform  = showedPosition(d);
+    }
+
+    for (let i = 0; i < imgs[d].length; i++) {
+      imgs[d][i].style.transform  = "none";
+    }
+  });
+
+
 }
