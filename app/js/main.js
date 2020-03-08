@@ -123,6 +123,6 @@ btn.onclick = function () {
       imgs[d][i].style.transform  = "none";
     }
   });
-
-
 }
+
+document.getElementsByClassName("nav-downBtn")[0].onclick = btn.onclick;

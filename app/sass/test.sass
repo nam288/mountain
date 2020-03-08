@@ -2,6 +2,10 @@
 *
   box-sizing: border-box
 
+a
+  text-decoration: none
+  color: white
+
 button
   margin: 0
   padding: 0
@@ -56,7 +60,7 @@ body
 .menu
   display: grid
   // display: none
-  grid-template-areas: "logo logo . nav" "sidebar . . ." ". . explore ." "footer footer . ."
+  grid-template-areas: "logo logo . nav" "sidebar . . navBtns" ". . explore ." "footer footer . ."
   grid-template-columns: 3rem 4rem 1fr 7rem
   grid-template-rows: 3rem 1fr 4.5rem 2rem
 
@@ -78,6 +82,22 @@ body
 
 .sidebar
   grid-area: sidebar
+
+.navBtns
+  grid-area: navBtns
+  display: grid
+  grid-template-rows: 40% 1fr 1fr 40%
+  grid-template-columns: 1fr
+  align-items: center
+  justify-items: center
+  text-align: center
+
+  .fas
+    background-color: transparent
+    color: white
+    border: 0px solid white
+    height: 1.4rem
+    width: 1.4rem
 
 .footer
   grid-area: footer
