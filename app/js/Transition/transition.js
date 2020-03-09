@@ -56,7 +56,7 @@ function initMultipleTransition (objArr, targetStyle) {
 };
 
 
-function addTransition(obj, listener, predicate, targetStyle, options) {
+function addTransition(obj, predicate, targetStyle, options) {
   // add default transition properties
   addTransitionProperties(obj);
 
@@ -85,19 +85,12 @@ function addTransition(obj, listener, predicate, targetStyle, options) {
   // add transitioner to object's transitioners
   obj.transitioners = obj.transitioners || [];
   obj.transitioners.push(transitioner);
-
-  // add object to listener's transitionObjects
-  listener.transitionObjects = listener.transitionObjects || [];
-  listener.transitionObjects.push(obj);
 };
 
-function addMultipleTransition (objArr, listenerArr,
-  predicate, targetStyle, optionArr) {
-  for (let indexListener = 0; indexListener < listenerArr.length; indexListener++) {
-    for (let indexObject = 0; indexObject < objArr.length; indexObject++) {
-      addTransition(objArr[indexObject], listenerArr[indexListener],
-        predicate, targetStyle, optionArr[+(indexObject % optionArr.length)]);
-    }
+function addMultipleTransition (objArr, predicate, targetStyle, optionArr) {
+  for (let indexObject = 0; indexObject < objArr.length; indexObject++) {
+    addTransition(objArr[indexObject],
+      predicate, targetStyle, optionArr[+(indexObject % optionArr.length)]);
   }
 }
 
