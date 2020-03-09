@@ -6,32 +6,15 @@ var gulp = require("gulp"),
     sourcemaps = require("gulp-sourcemaps"),
     pug = require('gulp-pug'),
     browserSync = require("browser-sync"),
-    runSequence = require('run-sequence');
+    runSequence = require('run-sequence'),
+    useref = require('gulp-useref');
 
-var paths = {
-    styles: {
-        // By using styles/**/*.sass we're telling gulp to check all folders for any sass file
-        src: "app/sass/*.sass",
-        // Compiled files will end up in whichever folder it's found in (partials are not compiled)
-        dest: "app/css"
-    }
-};
 
-// function style() {
-//     return gulp
-//         .src(paths.styles.src)
-//         // Initialize sourcemaps before compilation starts
-//         .pipe(sourcemaps.init())
-//         .pipe(sass())
-//         .on("error", sass.logError)
-//         // Use postcss with autoprefixer and compress the compiled file using cssnano
-//         .pipe(postcss([autoprefixer(), cssnano()]))
-//         // Now add/write the sourcemaps
-//         .pipe(sourcemaps.write())
-//         .pipe(gulp.dest(paths.styles.dest))
-//         // Add browsersync stream pipe after compilation
-//         .pipe(browserSync.stream());
-// }
+// gulp.task('useref', function(){
+//   return gulp.src('app/*.html')
+//     .pipe(useref())
+//     .pipe(gulp.dest('dist'))
+// });
 
 gulp.task('browserSync', function() {
   browserSync({
