@@ -1,3 +1,11 @@
+
+
+function selectClass(cls) {
+  return document.getElementsByClassName(cls)[0];
+}
+const selectAll   = (selector) => document.querySelectorAll(selector);
+const selectFirst = (selector) => selectAll(selector)[0];
+
 let debug = false;
 const showPageTime = "1000"
 const showTime = "400", hideTime = "1000";
@@ -11,69 +19,94 @@ var moreBtn   = document.getElementsByClassName("moreBtn")[0];
 var curPage   = document.getElementsByClassName("curPage")[0];
 var dots      = document.getElementsByClassName("dot");
 var explore   = document.getElementsByClassName("explore")[0];
+var fromPage = 0, toPage = 1;
+var moveDownBtn = selectClass("nav-downBtn");
+var moveUpBtn = selectClass("nav-upBtn");
+// Init position of transition components
 
+initMultipleTransition(selectAll(".TransDown"),  {y: -100});
+initMultipleTransition(selectAll(".TransUp"),    {y:  100});
+initMultipleTransition(selectAll(".TransLeft"),  {x: -100});
+initMultipleTransition(selectAll(".TransRight"), {x:  100});
 
-let wrps = ['Down', 'Left', 'Up', 'Right'].map(
-  d => document.getElementsByClassName(`WrpTrans${d}`));
-
-let imgs = ['Up', 'Right', 'Down', 'Left'].map(
-  d => document.getElementsByClassName(`ImgTrans${d}`));
-
-const initialPosition = (d, wrp) => {
-  if (wrp)
-    return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "-100" : "100"}%)`;
-  return "translate" + (d % 2 == 0 ? "y" : "x") + `(${d == 0 || d == 3 ? "100" : "-100"}%)`;
-};
-
-const setDelayTime = () => {
-  var delayDivs = document.querySelectorAll('div[class*="delayTime_"]');
-  for (const div of delayDivs) {
-    for (const cls of div.classList) {
-      let match = /^delayTime_(\d+)$/.exec(cls);
-      if (match === null) continue;
-      console.log(match);
-      let delayTime = match[1];
-      div.style.transitionDelay = `${delayTime}ms`;
-    }
-  }
-  console.log(delayDivs);
-};
-
-const setTransitionDuration = () => {
-  var delayDivs = document.querySelectorAll('div[class*="transDuration_"]');
-  for (const div of delayDivs) {
-    for (const cls of div.classList) {
-      let match = /^transDuration_(\d+)$/.exec(cls);
-      if (match === null) continue;
-      let transitionDuration = match[1];
-      div.style.transitionDuration = `${transitionDuration}ms`;
-    }
-  }
-};
-
-if (!debug) {
-  [0,1,2,3].forEach(d => {
-    for (let i = 0; i < wrps[d].length; i++) {
-      wrps[d][i].style.overflow = "hidden";
-      wrps[d][i].style.transform = initialPosition(d, true);
-    }
-    for (let i = 0; i < imgs[d].length; i++) {
-      imgs[d][i].style.transform = initialPosition(d, false);
-    }
+// Animate the second page
+const page2ShowTime = 1000,
+      page2ImgShowTime = 600,
+      page2ImgExtraTime = 200,
+      page2ContentShowTime = 600;
+addTransition(page2, btn, () => true,
+  {},
+  {
+    duration: page2ShowTime,
+    timing: "cubic-bezier(.65,.29,.54,0.9)",
   });
-}
 
-[0, 1, 2, 3].forEach(d => {
-  for (let i = 0; i < wrps[d].length; i++) {
-    wrps[d][i].style.transition = `transform ${showTime}ms cubic-bezier${showTiming} 1100ms`;
-  }
+// Show the second page's components
 
-  for (let i = 0; i < imgs[d].length; i++) {
-    imgs[d][i].style.transition = `transform ${showTime * 1.5}ms cubic-bezier${showTiming} 1100ms`;
-  }
-});
+// Images
+
+addMultipleTransition(
+  [
+    selectClass("p2-top"),
+    selectClass("p2-bottom"),
+    selectFirst(".p2-top > img"),
+    selectFirst(".p2-bottom > img"),
+  ],
+  [btn, ],
+  (_, to) => to == 1,
+  {},
+  [...Array(4)].map((_,i) =>
+    {
+      return {
+        delay: page2ShowTime,
+        duration: page2ImgShowTime + +(i > 1) * page2ImgExtraTime,
+        timing: `cubic-bezier${showTiming}`,
+      };
+    }
+  )
+);
+
+// Content
+
+// Title
+addMultipleTransition(
+  selectAll(".content-title div"),
+  [btn],
+  (_, to) => to == 1,
+  {},
+  [{
+    delay: page2ShowTime + page2ImgShowTime,
+    duration: page2ContentShowTime,
+    timing: `cubic-bezier${showTiming}`,
+  }]
+);
+
+// Description
+addMultipleTransition(
+  selectAll(".content-description div"),
+  [btn],
+  (_, to) => to == 1,
+  {},
+  [{
+    delay: page2ShowTime + page2ImgShowTime,
+    duration: page2ContentShowTime + 200,
+    timing: `cubic-bezier${showTiming}`,
+  }]
+);
+
+moveDownBtn
+
+
 
 btn.onclick = function () {
+
+  // runTransition(page2, 0);
+  for (const el of this.transitionObjects) {
+    for (let i = 0, n = el.transitioners.length; i < n; i++)
+      if (el.transitioners[i].predicate(fromPage, toPage))
+        runTransition(el, i);
+  }
+  /* save
   // transition page
   page2.style.display = "grid";
   page2.style.transform = "translateX(0)";
@@ -107,10 +140,10 @@ btn.onclick = function () {
   for (const directionImages of imgs)
     for (const image of directionImages)
       image.style.transform = "none";
-
+  */
 };
 
-document.getElementsByClassName("nav-downBtn")[0].onclick = function () {
-  btn.onclick();
+// document.getElementsByClassName("nav-downBtn")[0].onclick = function () {
+//   btn.onclick();
 
-}
+// }

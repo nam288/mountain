@@ -209,12 +209,16 @@ body {
   font-weight: 100;
   letter-spacing: 0.2rem;
   line-height: 1.1em; }
+  .content-title > div {
+    overflow: hidden; }
 
 .content-description {
   grid-area: description;
   padding-top: 1.5rem;
   color: #808389;
   line-height: 1.4em; }
+  .content-description > div {
+    overflow: hidden; }
 
 .p2-top, .p2-bottom {
   overflow: hidden;
